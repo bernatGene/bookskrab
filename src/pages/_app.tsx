@@ -5,6 +5,7 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import 'tailwindcss/tailwind.css'
+import '../styles/global.css'
 
 const MyApp: AppType = ({
   Component,
