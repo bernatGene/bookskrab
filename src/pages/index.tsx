@@ -1,16 +1,23 @@
 import { trpc } from "../utils/trpc"
-
+// import { getBookPair } from "../utils/getRandomBook";
+import { getBookPair } from "../utils/getRandomBook";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const {data, isLoading} = trpc.useQuery(["example.hello", {text: "Bernat"}])
-  if (isLoading) return <div>is Loading</div>
-  if (data) return <div>{data.greeting}</div>
+  
+  const [options, setOptions] = useState([-1, -1])
+  useEffect(() => setOptions(getBookPair()),[])
+  const [first, second] = options
   return (
     <div className="h-screen w-screen flex flex-col justify-start items-center"> 
       <div className="p-8"></div>
-      <div className="text-xl text-center">Book title</div>
+      <div className="text-xl text-center">Books</div>
       <div className="p-2"></div>
-      <div className="border rounded p-16 flex max-w-2xl text-center">Book info</div>
+      <div className="border rounded p-16 flex max-w-2xl text-center items-center">
+        <div className="w-8 h-8">{first}</div>
+        <div className="p4">or</div>
+        <div className="w-8 h-8">{second}</div>
+      </div>
     </div>
   );
 } 
