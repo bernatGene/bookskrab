@@ -13,7 +13,7 @@ function bookCard(result: UseQueryResult<BookInfo>) {
     const languageNames = new Intl.DisplayNames(['en'], {
       type: 'language'
     });    
-    const language = languageNames.of(result.data?.language || "zxx") || "Loading...";
+    const language = languageNames.of(result.data?.language || "zxx");
     const yearPublished = result.data?.pusblishedDate || "Loading..."
     return (
     <div className="p-4 border rounded">
