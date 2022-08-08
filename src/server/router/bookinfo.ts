@@ -1,18 +1,42 @@
 import { createRouter } from "./context";
 import { z } from "zod";
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { resolve } from "path";
-import { rejects } from "assert";
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 
-async function getInfo(): Promise<object> {
+
+export interface BookInfo {
+    title: string;
+    language: string;
+    pusblishedDate: string;
+    authors: string[];
+}
+
+const unknownBook : BookInfo = {
+    title: "Unknown",
+    language: "Unknown",
+    pusblishedDate: "Unknown",
+    authors: ["unknown"],
+};
+
+function formatGoogleBooksResponse(response: AxiosResponse): BookInfo {
+    if (! (response.data.totalItems > 0 )) return unknownBook;
+    const volumeInfo = response.data.items[0].volumeInfo;
+    const title = volumeInfo.title || unknownBook.title;
+    const language = volumeInfo.language || unknownBook.language;
+    const pusblishedDate = volumeInfo.publishedDate || unknownBook.pusblishedDate;
+    const authors = volumeInfo.authors || unknownBook.authors;
+    return {title: title, language: language, pusblishedDate: pusblishedDate, authors: authors}
+}
+
+async function getInfo(isbn: number): Promise<BookInfo> {
     const instance = axios.create({
         baseURL: "https://www.googleapis.com"
     });
-    return new Promise<object>((resolve, reject) => {
+    if (isbn === 0) return unknownBook
+    return new Promise<BookInfo>((resolve, reject) => {
         instance
-        .get("/books/v1/volumes?q=isbn:9781853260025")
-        .then((response: AxiosResponse) => resolve(response.data))
+        .get("/books/v1/volumes?q=isbn:" + isbn)
+        .then((response: AxiosResponse) => resolve(formatGoogleBooksResponse(response)))
         .catch((error: AxiosError<string>) => reject(error));
     });
 };
@@ -24,7 +48,8 @@ export const bookRouter = createRouter()
         isbn: z.number(),
       }),
     async resolve({ input }) {
-        return getInfo()
+        const bookInfo = await getInfo(input.isbn)
+        return bookInfo
     }
   })
 
