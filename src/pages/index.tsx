@@ -13,12 +13,12 @@ function bookCard(result: UseQueryResult<BookInfo>) {
     });    
     const language = languageNames.of(result.data?.language || "zxx");
     const yearPublished = result.data?.pusblishedDate || "Loading...";
-    const thumbnail = result.data?.thumbnail || "Thumbnail"
+    const thumbnail = result.data?.thumbnail ||"https://static.thenounproject.com/png/132226-200.png"
     return (  
     <div className="p-4 border rounded">
       <div className="flex flex-row items-center">
         <div className="p-4 border rounded">
-          <img src={thumbnail} alt="Unknown cover"/>
+          <img src={thumbnail} alt="No Image available"/>
         </div>
         <div className="p-8">
           <div>{"Title: " + title}</div>
