@@ -15,9 +15,11 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: ['books.google.com', 'static.thenounproject.com'],
+  }
 });
 
-export const images = {
-  loader: "default",
-  domains: ["books.google.com/books", "static.thenounproject.com"]
-};
+// export const images = {
+//   domains: ['books.google.com', 'static.thenounproject.com'],
+// };
