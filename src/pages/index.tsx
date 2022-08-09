@@ -3,6 +3,7 @@ import { getBookPair } from "../utils/getRandomBook";
 import { useEffect, useState } from "react";
 import { UseQueryResult } from "react-query";
 import { BookInfo } from "../server/router/bookinfo";
+import Image from "next/image";
 
 const buttonClasses = "bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
 
@@ -20,8 +21,8 @@ function bookCard(result: UseQueryResult<BookInfo>) {
     return (  
     <div className="p-4 border rounded">
       <div className="flex flex-row items-center">
-        <div className="p-4 border rounded">
-          <img src={thumbnail} alt="No Image available"/>
+        <div className="p-4 rounded w-32 h-32 relative">
+          <Image src={thumbnail} layout={"fill"} objectFit={"contain"} alt="No Image available"/>
         </div>
         <div className="p-8">
           <div>{"Title: " + title}</div>
