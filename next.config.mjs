@@ -19,5 +19,5 @@ export default defineNextConfig({
 
 export const images = {
   loader: "default",
-  domains: ["books.google.com", "static.thenounproject.com"]
+  domains: ["books.google.com/books", "static.thenounproject.com"]
 };
