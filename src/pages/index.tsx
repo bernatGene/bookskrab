@@ -42,7 +42,15 @@ export default function Home() {
   const [first, second] = options;
   const firstInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (first || 0)}])
   const secondInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (second || 0)}])
+
+  const storeMutation = trpc.useMutation(["book.store-book"]);
+
   const storeToLibrary = (isbn: number) => {
+    if (isbn === first) {
+      storeMutation.mutate({isbn: isbn, title: firstInfo.data?.title})
+    } else {
+      storeMutation.mutate({isbn: isbn, title: secondInfo.data?.title})
+    }
     setOptions(getBookPair())
   }
   return (

@@ -1,7 +1,8 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 import axios, { AxiosError, AxiosResponse } from 'axios';
-
+import { resolve } from "path";
+import { prisma } from  "../db/client"
 
 
 export interface BookInfo {
@@ -69,6 +70,17 @@ export const bookRouter = createRouter()
         const bookInfo = await getInfo(input.isbn)
         return bookInfo
     }
-  })
+  }).mutation("store-book", {
+    input: z.object({
+      isbn: z.number(),
+      title: z.string().nullish(),
+    }),
+    async resolve({input}) {
+      const storeInDb = await prisma.bookInfo.create({
+        data: {isbn: input.isbn, title: input?.title}
+      })
+      return {success: true, store: storeInDb}
+    },
+  });
 
 
