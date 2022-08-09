@@ -65,7 +65,6 @@ export default function Home() {
           <div className="p-4"></div>
           <button className={buttonClasses} onClick={() => storeToLibrary(first || 0)}> Store to library</button>
         </div>
-        <div className="w-8 h-8 p-4">or</div>
         <div className="flex flex-col items-center">
           <div className="max-w-3xl">{bookCard(secondInfo)}</div>
           <div className="p-4"></div>
