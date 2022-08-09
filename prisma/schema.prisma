@@ -64,10 +64,12 @@ model Example {
 // }
 
 model BookInfo {
-    id          String  @id @default(cuid())
-    createdAt   DateTime @default(now())
+    isbn         BigInt   @id
+    lastModified DateTime @default(now())
 
-    isbn        BigInt
-    title       String?
-    author      String?
-}   
+    title         String
+    authors       String?
+    publishedDate String?
+    language      String?
+    thumbnail     String?
+}

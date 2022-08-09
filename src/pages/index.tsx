@@ -10,7 +10,7 @@ const buttonClasses = "bg-white hover:bg-gray-100 text-gray-800 font-semibold py
 
 function bookCard(result: UseQueryResult<BookInfo>) {
     const title = result.data?.title || "Loading...";
-    const author = result.data?.authors || "Loading...";
+    const authors = result.data?.authors || "Loading...";
     const languageNames = new Intl.DisplayNames(['en'], {
       type: 'language'
     });    
@@ -26,7 +26,7 @@ function bookCard(result: UseQueryResult<BookInfo>) {
         </div>
         <div className="p-8">
           <div>{"Title: " + title}</div>
-          <div>{"Author: " + author}</div>
+          <div>{"Author: " + authors}</div>
           <div>{"Language: " + language}</div>
           <div>{"Year: " + yearPublished}</div>
           <div>{"ISBN: " + isbn}</div>
@@ -47,10 +47,10 @@ export default function Home() {
   const storeMutation = trpc.useMutation(["book.store-book"]);
 
   const storeToLibrary = (isbn: number) => {
-    if (isbn === first) {
-      storeMutation.mutate({isbn: isbn, title: firstInfo.data?.title})
-    } else {
-      storeMutation.mutate({isbn: isbn, title: secondInfo.data?.title})
+    if (isbn === first && firstInfo.data) {
+      storeMutation.mutate({...firstInfo.data})
+    } else if (isbn === second && secondInfo.data) {
+      storeMutation.mutate({...secondInfo.data})
     }
     setOptions(getBookPair())
   }

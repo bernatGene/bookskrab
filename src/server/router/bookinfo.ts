@@ -73,11 +73,21 @@ export const bookRouter = createRouter()
   }).mutation("store-book", {
     input: z.object({
       isbn: z.number(),
-      title: z.string().nullish(),
+      title: z.string(),
+      authors: z.array(z.string()),
+      publishedDate: z.string().nullish(),
+      thumbnail: z.string().nullish(),
+      language: z.string().nullish(),
     }),
     async resolve({input}) {
       const storeInDb = await prisma.bookInfo.create({
-        data: {isbn: input.isbn, title: input?.title}
+        data: {isbn: input.isbn,
+              title: input.title,
+              authors: input?.authors ?  input?.authors[0] : null,
+              publishedDate: input?.publishedDate,
+              thumbnail: input?.thumbnail,
+              language: input?.language,
+            }
       })
       return {success: true, store: storeInDb}
     },
