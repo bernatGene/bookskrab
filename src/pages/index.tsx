@@ -14,6 +14,7 @@ function bookCard(result: UseQueryResult<BookInfo>) {
     const language = languageNames.of(result.data?.language || "zxx");
     const yearPublished = result.data?.pusblishedDate || "Loading...";
     const thumbnail = result.data?.thumbnail ||"https://static.thenounproject.com/png/132226-200.png"
+    const isbn = result.data?.isbn || 0
     return (  
     <div className="p-4 border rounded">
       <div className="flex flex-row items-center">
@@ -25,6 +26,7 @@ function bookCard(result: UseQueryResult<BookInfo>) {
           <div>{"Author: " + author}</div>
           <div>{"Language: " + language}</div>
           <div>{"Year: " + yearPublished}</div>
+          <div>{"ISBN: " + isbn}</div>
         </div>
       </div>
     </div>
@@ -36,10 +38,9 @@ export default function Home() {
   const [options, setOptions] = useState([-1, -1])
   useEffect(() => setOptions(getBookPair()),[])
   const [first, second] = options;
-  console.log(first, second)
   const firstInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (first || 0)}])
   const secondInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (second || 0)}])
-
+  console.log(first, second)
   return (
     <div className="h-screen w-screen flex flex-col justify-start items-center"> 
       <div className="p-8"></div>

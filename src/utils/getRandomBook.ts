@@ -5,7 +5,6 @@ let bookList: Array<number> = [
     9780631181774,
     9783518294000,
     9781780239880,
-    727741324287,
     9788488839985,
     9788418680021,
     9788433915702,
@@ -19,7 +18,6 @@ let bookList: Array<number> = [
     9788418680106,
     9781853260025,
     9780441172719,
-    9771234567003,
     9788425231575, 
     9788409032952,
     9788634139167,
@@ -39,7 +37,6 @@ export const getRandomBook = (notThisOne: number = -1) => {
 export const getBookPair = () => {
     const firstId = getRandomBook();
     const secondId = getRandomBook(firstId);
-    console.log(firstId, secondId)
     return [bookList[firstId] || -1, bookList[secondId] || -1];
 }
 

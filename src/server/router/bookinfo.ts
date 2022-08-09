@@ -10,6 +10,7 @@ export interface BookInfo {
     pusblishedDate: string;
     authors: string[];
     thumbnail: string;
+    isbn: number;
 }
 
 const unknownBook : BookInfo = {
@@ -18,17 +19,31 @@ const unknownBook : BookInfo = {
     pusblishedDate: "Unknown",
     authors: ["unknown"],
     thumbnail: "",
+    isbn: 0,
 };
 
-function formatGoogleBooksResponse(response: AxiosResponse): BookInfo {
-    if (! (response.data.totalItems > 0 )) return unknownBook;
+function formatGoogleBooksResponse(response: AxiosResponse, isbn: number): BookInfo {
+    if (! (response.data.totalItems > 0 )) {
+        return {title: unknownBook.title,
+                language: unknownBook.language,
+                pusblishedDate: unknownBook.pusblishedDate,
+                authors: unknownBook.authors,
+                thumbnail: unknownBook.thumbnail,
+                isbn: isbn}
+    }
     const volumeInfo = response.data.items[0].volumeInfo;
     const title = volumeInfo.title || unknownBook.title;
     const language = volumeInfo.language || unknownBook.language;
     const pusblishedDate = volumeInfo.publishedDate || unknownBook.pusblishedDate;
     const authors = volumeInfo.authors || unknownBook.authors;
     const thumbnail = ("imageLinks" in volumeInfo) ? volumeInfo.imageLinks.thumbnail : unknownBook.thumbnail
-    return {title: title, language: language, pusblishedDate: pusblishedDate, authors: authors, thumbnail: thumbnail}
+    return {title: title,
+            language: language,
+            pusblishedDate: pusblishedDate,
+            authors: authors,
+            thumbnail: thumbnail,
+            isbn: isbn,
+          }
 }
 
 async function getInfo(isbn: number): Promise<BookInfo> {
@@ -39,7 +54,7 @@ async function getInfo(isbn: number): Promise<BookInfo> {
     return new Promise<BookInfo>((resolve, reject) => {
         instance
         .get("/books/v1/volumes?q=isbn:" + isbn)
-        .then((response: AxiosResponse) => resolve(formatGoogleBooksResponse(response)))
+        .then((response: AxiosResponse) => resolve(formatGoogleBooksResponse(response, isbn)))
         .catch((error: AxiosError<string>) => reject(error));
     });
 };
