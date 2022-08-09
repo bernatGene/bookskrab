@@ -9,6 +9,7 @@ export interface BookInfo {
     language: string;
     pusblishedDate: string;
     authors: string[];
+    thumbnail: string;
 }
 
 const unknownBook : BookInfo = {
@@ -16,6 +17,7 @@ const unknownBook : BookInfo = {
     language: "Unknown",
     pusblishedDate: "Unknown",
     authors: ["unknown"],
+    thumbnail: "",
 };
 
 function formatGoogleBooksResponse(response: AxiosResponse): BookInfo {
@@ -25,7 +27,8 @@ function formatGoogleBooksResponse(response: AxiosResponse): BookInfo {
     const language = volumeInfo.language || unknownBook.language;
     const pusblishedDate = volumeInfo.publishedDate || unknownBook.pusblishedDate;
     const authors = volumeInfo.authors || unknownBook.authors;
-    return {title: title, language: language, pusblishedDate: pusblishedDate, authors: authors}
+    const thumbnail = ("imageLinks" in volumeInfo) ? volumeInfo.imageLinks.thumbnail : unknownBook.thumbnail
+    return {title: title, language: language, pusblishedDate: pusblishedDate, authors: authors, thumbnail: thumbnail}
 }
 
 async function getInfo(isbn: number): Promise<BookInfo> {

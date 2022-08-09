@@ -1,4 +1,3 @@
-import internal from "stream";
 
 let bookList: Array<number> = [
     714855660387,
@@ -12,7 +11,6 @@ let bookList: Array<number> = [
     9788433915702,
     9788417909390,
     9782731674040,
-    2731674040,
     9788409091683,
     9780141989143,
     9781852848453,
@@ -32,15 +30,16 @@ let bookList: Array<number> = [
 const BOOK_LIST_LEN = bookList.length
 
 
-export const getRandomBook = (notThisOne?: number) => {
-    const rValue = (Math.floor(Math.random() * (BOOK_LIST_LEN))) + 1;
-    if (notThisOne !== rValue) return rValue - 1;
+export const getRandomBook = (notThisOne: number = -1) => {
+    if (notThisOne === -1) return (Math.floor(Math.random() * (BOOK_LIST_LEN)));
+    const rValue = (Math.floor(Math.random() * (BOOK_LIST_LEN - 1))) + 1;
     return ((notThisOne + rValue) % BOOK_LIST_LEN);
 }
 
 export const getBookPair = () => {
     const firstId = getRandomBook();
     const secondId = getRandomBook(firstId);
+    console.log(firstId, secondId)
     return [bookList[firstId] || -1, bookList[secondId] || -1];
 }
 
