@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { UseQueryResult } from "react-query";
 import { BookInfo } from "../server/router/bookinfo";
 
+const buttonClasses = "bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+
 
 function bookCard(result: UseQueryResult<BookInfo>) {
     const title = result.data?.title || "Loading...";
@@ -40,16 +42,26 @@ export default function Home() {
   const [first, second] = options;
   const firstInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (first || 0)}])
   const secondInfo = trpc.useQuery(["book.get-book-info-by-isbn", {isbn: (second || 0)}])
-  console.log(first, second)
+  const storeToLibrary = (isbn: number) => {
+    setOptions(getBookPair())
+  }
   return (
     <div className="h-screen w-screen flex flex-col justify-start items-center"> 
       <div className="p-8"></div>
       <div className="text-center">Books</div>
       <div className="p-2"></div>
       <div className="p-8 border rounded flex w-max-w-6xl items-center">
-        <div className="max-w-3xl">{bookCard(firstInfo)}</div>
+        <div className="flex flex-col items-center">
+          <div className="max-w-3xl">{bookCard(firstInfo)}</div>
+          <div className="p-4"></div>
+          <button className={buttonClasses} onClick={() => storeToLibrary(first || 0)}> Store to library</button>
+        </div>
         <div className="w-8 h-8 p-4">or</div>
-        <div className="max-w-3xl">{bookCard(secondInfo)}</div>
+        <div className="flex flex-col items-center">
+          <div className="max-w-3xl">{bookCard(secondInfo)}</div>
+          <div className="p-4"></div>
+          <button className={buttonClasses} onClick={() => storeToLibrary(second || 0)}> Store to library</button>
+        </div>
       </div>
     </div>
   );
