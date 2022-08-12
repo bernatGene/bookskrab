@@ -63,8 +63,14 @@ model Example {
 //     @@unique([identifier, token])
 // }
 
+enum IDTYPE {
+    ISBN
+    ADHOC
+}
+
 model BookInfo {
-    isbn         BigInt   @id
+    identifier   String   @id
+    idType       IDTYPE
     lastModified DateTime @default(now())
 
     title         String

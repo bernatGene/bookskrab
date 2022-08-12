@@ -3,6 +3,7 @@ import { z } from "zod";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { resolve } from "path";
 import { prisma } from  "../db/client"
+import { IDTYPE } from "@prisma/client";
 
 
 export interface BookInfo {
@@ -11,7 +12,8 @@ export interface BookInfo {
     pusblishedDate: string;
     authors: string[];
     thumbnail: string;
-    isbn: number;
+    identifier: string;
+    idType: IDTYPE
 }
 
 const unknownBook : BookInfo = {
@@ -20,17 +22,20 @@ const unknownBook : BookInfo = {
     pusblishedDate: "Unknown",
     authors: ["unknown"],
     thumbnail: "",
-    isbn: 0,
+    identifier: "error",
+    idType: IDTYPE.ADHOC
 };
 
-function formatGoogleBooksResponse(response: AxiosResponse, isbn: number): BookInfo {
+function formatGoogleBooksResponse(response: AxiosResponse, identifier: string): BookInfo {
     if (! (response.data.totalItems > 0 )) {
         return {title: unknownBook.title,
                 language: unknownBook.language,
                 pusblishedDate: unknownBook.pusblishedDate,
                 authors: unknownBook.authors,
                 thumbnail: unknownBook.thumbnail,
-                isbn: isbn}
+                identifier: "error",
+                idType: IDTYPE.ADHOC
+              }
     }
     const volumeInfo = response.data.items[0].volumeInfo;
     const title = volumeInfo.title || unknownBook.title;
@@ -43,15 +48,16 @@ function formatGoogleBooksResponse(response: AxiosResponse, isbn: number): BookI
             pusblishedDate: pusblishedDate,
             authors: authors,
             thumbnail: thumbnail,
-            isbn: isbn,
+            identifier: identifier,
+            idType: IDTYPE.ISBN
           }
 }
 
-async function getInfo(isbn: number): Promise<BookInfo> {
+async function getInfo(isbn: string): Promise<BookInfo> {
     const instance = axios.create({
         baseURL: "https://www.googleapis.com"
     });
-    if (isbn === 0) return unknownBook
+    if (isbn === "Error") return unknownBook
     return new Promise<BookInfo>((resolve, reject) => {
         instance
         .get("/books/v1/volumes?q=isbn:" + isbn)
@@ -64,15 +70,15 @@ export const bookRouter = createRouter()
   .query("get-book-info-by-isbn", {
     input: z
       .object({
-        isbn: z.number(),
+        identifier: z.string(),
       }),
     async resolve({ input }) {
-        const bookInfo = await getInfo(input.isbn)
+        const bookInfo = await getInfo(input.identifier)
         return bookInfo
     }
   }).mutation("store-book", {
     input: z.object({
-      isbn: z.number(),
+      identifier: z.string(),
       title: z.string(),
       authors: z.array(z.string()),
       publishedDate: z.string().nullish(),
@@ -81,7 +87,8 @@ export const bookRouter = createRouter()
     }),
     async resolve({input}) {
       const storeInDb = await prisma.bookInfo.create({
-        data: {isbn: input.isbn,
+        data: {identifier: input.identifier,
+              idType: IDTYPE.ISBN,
               title: input.title,
               authors: input?.authors ?  input?.authors[0] : null,
               publishedDate: input?.publishedDate,
