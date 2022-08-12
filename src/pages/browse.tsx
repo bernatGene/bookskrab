@@ -9,7 +9,7 @@ export type AsyncReturnType<T extends (...args: any) => Promise<any>> =
   T extends (...args: any) => Promise<infer R> ? R : any;
 
 const getBookList =  async () => {
-    const books = await prisma.bookInfo.findMany({
+    const books = await prisma.book.findMany({
         orderBy: {
             lastModified: 'desc'
         }

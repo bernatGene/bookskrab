@@ -1,9 +1,7 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { resolve } from "path";
-import { prisma } from  "../db/client"
-import { IDTYPE } from "@prisma/client";
+import { BOOK_ID_TYPE } from "@prisma/client";
 
 
 export interface BookInfo {
@@ -11,9 +9,9 @@ export interface BookInfo {
     language: string;
     pusblishedDate: string;
     authors: string[];
-    thumbnail: string;
+    thumbnail?: string;
     identifier: string;
-    idType: IDTYPE
+    idType: BOOK_ID_TYPE
 }
 
 const unknownBook : BookInfo = {
@@ -21,9 +19,9 @@ const unknownBook : BookInfo = {
     language: "Unknown",
     pusblishedDate: "Unknown",
     authors: ["unknown"],
-    thumbnail: "",
+    thumbnail: undefined,
     identifier: "error",
-    idType: IDTYPE.ADHOC
+    idType: BOOK_ID_TYPE.ADHOC
 };
 
 function formatGoogleBooksResponse(response: AxiosResponse, identifier: string): BookInfo {
@@ -34,7 +32,7 @@ function formatGoogleBooksResponse(response: AxiosResponse, identifier: string):
                 authors: unknownBook.authors,
                 thumbnail: unknownBook.thumbnail,
                 identifier: "error",
-                idType: IDTYPE.ADHOC
+                idType: BOOK_ID_TYPE.ADHOC
               }
     }
     const volumeInfo = response.data.items[0].volumeInfo;
@@ -49,7 +47,7 @@ function formatGoogleBooksResponse(response: AxiosResponse, identifier: string):
             authors: authors,
             thumbnail: thumbnail,
             identifier: identifier,
-            idType: IDTYPE.ISBN
+            idType: BOOK_ID_TYPE.ISBN13
           }
 }
 
@@ -86,17 +84,17 @@ export const bookRouter = createRouter()
       language: z.string().nullish(),
     }),
     async resolve({input}) {
-      const storeInDb = await prisma.bookInfo.create({
-        data: {identifier: input.identifier,
-              idType: IDTYPE.ISBN,
-              title: input.title,
-              authors: input?.authors ?  input?.authors[0] : null,
-              publishedDate: input?.publishedDate,
-              thumbnail: input?.thumbnail,
-              language: input?.language,
-            }
-      })
-      return {success: true, store: storeInDb}
+      // const storeInDb = await prisma.bookInfo.create({
+      //   data: {identifier: input.identifier,
+      //         idType: BOOK_ID_TYPE.ISBN13,
+      //         title: input.title,
+      //         authors: input?.authors ?  input?.authors[0] : null,
+      //         publishedDate: input?.publishedDate,
+      //         thumbnail: input?.thumbnail,
+      //         language: input?.language,
+      //       }
+      // })
+      return {success: true} //store: storeInDb}
     },
   });
 

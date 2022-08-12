@@ -37,6 +37,15 @@ function bookCard(result: UseQueryResult<BookInfo>) {
     );
 }
 
+
+export function AddBook() {
+  <div className="h-screen w-screen flex flex-col justify-start items-center">
+    <div className="p-8"></div>
+      <div className="text-center">Add new book</div>
+    <div className="p-2"></div>
+  </div>
+}
+
 export default function Home() {
   
   const [options, setOptions] = useState([-1, -1])

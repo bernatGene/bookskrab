@@ -3,6 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
@@ -12,11 +13,12 @@ datasource db {
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
+    referentialIntegrity = "prisma"
 }
 
-model Example {
-    id String @id @default(cuid())
-}
+// model Example {
+//     id String @id @default(cuid())
+// }
 
 // // Necessary for Next auth
 // model Account {
@@ -63,19 +65,46 @@ model Example {
 //     @@unique([identifier, token])
 // }
 
-enum IDTYPE {
-    ISBN
+enum BOOK_ID_TYPE {
+    ISBN10
+    ISBN13
     ADHOC
 }
 
-model BookInfo {
-    identifier   String   @id
-    idType       IDTYPE
-    lastModified DateTime @default(now())
+model Author {
+    identifier  String  @id @default(cuid())
+    name        String  @unique
+    aliases     String?
+    nationality String?
+    books       Book[]
+}
 
-    title         String
-    authors       String?
-    publishedDate String?
-    language      String?
-    thumbnail     String?
+model ClassificationTag {
+    shortName   String @id
+    description String
+    taggedBooks Book[]
+}
+
+model BookShelf {
+    shortName   String @id
+    description String
+    books       Book[]
+}
+
+model Book {
+    identifier   String       @id
+    idType       BOOK_ID_TYPE
+    lastModified DateTime     @default(now())
+
+    title              String
+    publishedDate      String?
+    language           String?
+    thumbnailURL       String?
+    authors            Author[]
+    tags               ClassificationTag[]
+    authorId           String
+    isTranslation      Boolean             @default(false)
+    copies             Int                 @default(1)
+    bookShelf          BookShelf           @relation(fields: [bookShelfShortName], references: [shortName])
+    bookShelfShortName String
 }
