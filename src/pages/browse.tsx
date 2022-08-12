@@ -26,9 +26,9 @@ const BookListing: React.FC<{result: BookDbResult[number], index: number}> = ({
     const isbn = String(result.identifier)
     return (
         <div className="relative flex flex-row items-center">
-            <div>{index}</div>
-            <div>{isbn}</div>
-            <div>{result.title}</div>
+            <div className="p-4">{index}</div>
+            <div className="p-4">{isbn}</div>
+            <div className="p-4">{result.title}</div>
         </div>      
     );
 };
