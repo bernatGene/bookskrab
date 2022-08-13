@@ -2,17 +2,17 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-    provider = "mysql"
+    provider             = "mysql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.text annotations in model Account below
     // Further reading: 
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    url                  = env("DATABASE_URL")
     referentialIntegrity = "prisma"
 }
 
@@ -80,14 +80,14 @@ model Author {
 }
 
 model ClassificationTag {
-    shortName   String @id
-    description String
+    shortName   String  @id
+    description String?
     taggedBooks Book[]
 }
 
 model BookShelf {
-    shortName   String @id
-    description String
+    shortName   String  @id
+    description String?
     books       Book[]
 }
 
@@ -97,14 +97,17 @@ model Book {
     lastModified DateTime     @default(now())
 
     title              String
+    publisher          String?
     publishedDate      String?
     language           String?
     thumbnailURL       String?
     authors            Author[]
     tags               ClassificationTag[]
-    authorId           String
+    authorId           String?
     isTranslation      Boolean             @default(false)
     copies             Int                 @default(1)
-    bookShelf          BookShelf           @relation(fields: [bookShelfShortName], references: [shortName])
-    bookShelfShortName String
+    bookShelf          BookShelf?          @relation(fields: [bookShelfShortName], references: [shortName])
+    bookShelfShortName String?
+    pageCount          Int?
+    description        String?
 }

@@ -2,15 +2,18 @@ import { createRouter } from "./context";
 import { z } from "zod";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BOOK_ID_TYPE } from "@prisma/client";
+import { prisma } from "../db/client";
 
 
 export interface BookInfo {
     title: string;
     language: string;
-    pusblishedDate: string;
+    publisher?: string;
+    pusblishedDate?: string;
     authors: string[];
     thumbnail?: string;
     identifier: string;
+    pageCount?: number;
     idType: BOOK_ID_TYPE
 }
 
@@ -26,14 +29,7 @@ const unknownBook : BookInfo = {
 
 function formatGoogleBooksResponse(response: AxiosResponse, identifier: string): BookInfo {
     if (! (response.data.totalItems > 0 )) {
-        return {title: unknownBook.title,
-                language: unknownBook.language,
-                pusblishedDate: unknownBook.pusblishedDate,
-                authors: unknownBook.authors,
-                thumbnail: unknownBook.thumbnail,
-                identifier: "error",
-                idType: BOOK_ID_TYPE.ADHOC
-              }
+        throw new AxiosError("Book not found")
     }
     const volumeInfo = response.data.items[0].volumeInfo;
     const title = volumeInfo.title || unknownBook.title;
@@ -84,18 +80,17 @@ export const bookRouter = createRouter()
       language: z.string().nullish(),
     }),
     async resolve({input}) {
-      // const storeInDb = await prisma.bookInfo.create({
-      //   data: {identifier: input.identifier,
-      //         idType: BOOK_ID_TYPE.ISBN13,
-      //         title: input.title,
-      //         authors: input?.authors ?  input?.authors[0] : null,
-      //         publishedDate: input?.publishedDate,
-      //         thumbnail: input?.thumbnail,
-      //         language: input?.language,
-      //       }
-      // })
-      return {success: true} //store: storeInDb}
-    },
+      const storeInDb = await prisma.book.create({
+        data: {identifier: input.identifier,
+              idType: BOOK_ID_TYPE.ISBN13,
+              title: input.title,
+              publishedDate: input?.publishedDate,
+              thumbnailURL: input?.thumbnail,
+              language: input?.language,
+            }
+      })
+      return {success: true, store: storeInDb}
+    }
   });
 
 

@@ -63,5 +63,5 @@ export default BrowsePage
 export const getStaticProps: GetServerSideProps = async () => {
     const booksOrdered  = await getBookList();
     // console.log(booksOrdered)
-    return {props: {books: JSON.parse(JSON.stringify(booksOrdered))}, revalidate: 20}
+    return {props: {books: JSON.parse(JSON.stringify(booksOrdered))}, revalidate: 5}
 }
