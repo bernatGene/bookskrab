@@ -77,6 +77,8 @@ export default function AddBook() {
   return (
     <div className="h-screen w-screen flex flex-col justify-start items-center">
       <div className="p-8"></div>
+      <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-white">BookŠkrab</h3>
+      <div className="p-8"></div>
       <div className="text-center">Add new book</div>
       <div className="p-2"></div>
       <form className={underlineFormClasses} onSubmit={handleSearchISBN}>
