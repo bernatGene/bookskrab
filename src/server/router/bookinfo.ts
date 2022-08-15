@@ -91,6 +91,18 @@ export const bookRouter = createRouter()
       })
       return {success: true, store: storeInDb}
     }
+  }).query("is-book-in-db", {
+    input: z
+      .object({
+        identifier: z.string(),
+      }),
+    async resolve({ input }) {
+        const bookInfo = await prisma.book.findUnique({
+          where: {
+            identifier: String(input.identifier),
+          }});
+        return (bookInfo != null)
+    }
   });
 
 

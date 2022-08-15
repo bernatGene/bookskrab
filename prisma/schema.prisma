@@ -95,7 +95,6 @@ model Book {
     identifier   String       @id
     idType       BOOK_ID_TYPE
     lastModified DateTime     @default(now())
-
     title              String
     publisher          String?
     publishedDate      String?
@@ -103,7 +102,6 @@ model Book {
     thumbnailURL       String?
     authors            Author[]
     tags               ClassificationTag[]
-    authorId           String?
     isTranslation      Boolean             @default(false)
     copies             Int                 @default(1)
     bookShelf          BookShelf?          @relation(fields: [bookShelfShortName], references: [shortName])

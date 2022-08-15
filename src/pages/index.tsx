@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useLayoutEffect, useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
 import { BookInfo } from "../server/router/bookinfo";
 import Image from "next/image";
+// import { prisma } from "../server/db/client"
 import Link from "next/link";
 import { set } from "zod";
 import { type } from "os";
@@ -16,9 +17,9 @@ const underlineFormButtonClasses1 = 'flex-shrink-0 bg-teal-500 hover:bg-teal-700
 const underlineFormButtonClasses2 = 'flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded'
 
 
-const BookCardElement: React.FC<{displaySearch: boolean, result: UseQueryResult<BookInfo>}> =({
+const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult<BookInfo> }> = ({
   displaySearch,
-  result}) => {
+  result }) => {
   if (!displaySearch) return <div>Nothing yet</div>
   const title = result.data?.title || "Loading...";
   const authors = result.data?.authors || "Loading...";
@@ -30,7 +31,7 @@ const BookCardElement: React.FC<{displaySearch: boolean, result: UseQueryResult<
   const thumbnail = result.data?.thumbnail || "https://static.thenounproject.com/png/132226-200.png"
   const isbn = result.data?.identifier || "Error"
   const storeMutation = trpc.useMutation(["book.store-book"]);
-  
+
   const storeToLibrary = async () => {
     if (result.data) storeMutation.mutate({ ...result.data });
   }
@@ -55,6 +56,25 @@ const BookCardElement: React.FC<{displaySearch: boolean, result: UseQueryResult<
   );
 }
 
+const InfoBanner: React.FC<{ display: boolean, identifier: string }> = ({
+  display,
+  identifier }) => {
+  if (!display) return <></>;
+
+  const bookExists = trpc.useQuery(["book.is-book-in-db", {identifier: identifier }]);
+  let message = ""
+  if (bookExists ) {
+    message = "Book was added to the library"
+  } else {
+    message = "Book was already in the library"
+  }
+  return (
+    <div className="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
+      <p className="font-bold">{message}</p>
+      <p className="text-sm">Some additional text to explain said message.</p>
+    </div>
+  )
+}
 
 export default function AddBook() {
 
@@ -65,7 +85,7 @@ export default function AddBook() {
 
   const [bookCard, setBookCard] = useState(false);
   const searchResults = trpc.useQuery(["book.get-book-info-by-isbn", { identifier: (String(isbn)) }])
-  
+
   const handleSearchISBN = async (event: FormEvent) => {
     event.preventDefault();
     setBookCard(true)
@@ -94,6 +114,7 @@ export default function AddBook() {
         </div>
       </form>
       <BookCardElement displaySearch={bookCard} result={searchResults}></BookCardElement>
+      <InfoBanner display={bookCard} identifier={isbn}></InfoBanner>
       <div className="w-full text-xl text-center pb-2">
         <Link href="/browse">
           <a>Browse</a>
