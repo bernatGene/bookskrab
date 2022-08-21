@@ -30,7 +30,6 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   const bookExists = trpc.useQuery(["book.is-book-in-db", { identifier: isbn }]);
   const storeMutation = trpc.useMutation(["book.store-book"]);
   const [display, setDisplay] = useState(false)
-
   const storeToLibrary = async () => {
     if (result.data && !bookExists.data) storeMutation.mutate({ ...result.data });
     setDisplay(true)

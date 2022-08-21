@@ -31,7 +31,7 @@ const BookListing: React.FC<{ result: BookDbResult[number], index: number }> = (
     <tr className="border-b">
       <td className="px-6 py-2 whitespace-nowrap text-sm font-medium ">1</td>
       <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
-        <a href={"/browse/" + isbn} className="p-4 no-underline hover:underline">{result.title}</a>
+        <Link href={"/browse/" + isbn} className="p-4"><a className="no-underline hover:underline">{result.title}</a></Link>
       </td>
       <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
         <div className="p-4">{result.authors[0]?.name || "?"}</div>
@@ -56,7 +56,7 @@ const BrowsePage: React.FC<{
       </Head>
       <h2 className="text-2xl p-4">Results</h2>
       <Link href="/">
-        <a>Back to main</a>
+       <a className="no-underline hover:underline">Back to main</a> 
       </Link>
       <div className="flex flex-col w-full max-w-3xl border p-4">
         <table className="table-auto p-4">
