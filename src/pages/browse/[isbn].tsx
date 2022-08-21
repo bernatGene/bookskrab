@@ -4,6 +4,7 @@ import { trpc } from "../../utils/trpc";
 import { prisma } from "../../server/db/client"
 import { GetServerSideProps, GetStaticPaths } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 
 
@@ -55,7 +56,7 @@ export type BookProps = {
 const Post: React.FC<BookProps> = (props) => {
   return (
     <div className="p-8 flex flex-col items-center">
-      <div> <a href="/browse"> Back </a></div>
+      <div> <Link href={"/browse"}><a> Back </a></Link></div>
       <div className="p-4 fcenter lex flex-col max-w-2xl border">
         <div className="flex flex-row justify-items-end">
           <div className="flex flex-col">
