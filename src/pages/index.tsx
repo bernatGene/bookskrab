@@ -4,10 +4,7 @@ import { FormEvent, useEffect, useLayoutEffect, useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
 import { BookInfo } from "../server/router/bookinfo";
 import Image from "next/image";
-// import { prisma } from "../server/db/client"
 import Link from "next/link";
-import { set } from "zod";
-import { type } from "os";
 
 const buttonClasses = "bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow disabled"
 const underlineFormClasses = "w-full max-w-sm"
@@ -30,11 +27,15 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   const yearPublished = result.data?.pusblishedDate || "Loading...";
   const thumbnail = result.data?.thumbnail || "https://static.thenounproject.com/png/132226-200.png"
   const isbn = result.data?.identifier || "Error"
+  const bookExists = trpc.useQuery(["book.is-book-in-db", {identifier: isbn }]);
   const storeMutation = trpc.useMutation(["book.store-book"]);
+  const [display, setDisplay] = useState(false)
 
   const storeToLibrary = async () => {
-    if (result.data) storeMutation.mutate({ ...result.data });
+    if (result.data && !bookExists.data) storeMutation.mutate({ ...result.data });
+    setDisplay(true)
   }
+
   if (isbn == "Error") return <div>ISBN not found</div>
 
   return (
@@ -52,26 +53,32 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
         </div>
       </div>
       <button className={buttonClasses} onClick={storeToLibrary} type="button"> Add book to library</button>
+      <InfoBanner display={display} identifier={isbn} bookExists={bookExists.data == true}></InfoBanner>
     </div>
   );
 }
 
-const InfoBanner: React.FC<{ display: boolean, identifier: string }> = ({
+const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: boolean}> = ({
   display,
-  identifier }) => {
+  identifier,
+  bookExists
+ }) => {
   if (!display) return <></>;
 
-  const bookExists = trpc.useQuery(["book.is-book-in-db", {identifier: identifier }]);
   let message = ""
-  if (bookExists ) {
+  let color = "black"
+  if (!bookExists ) {
     message = "Book was added to the library"
+    color = "green"
   } else {
     message = "Book was already in the library"
+    color = "red"
   }
   return (
-    <div className="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
-      <p className="font-bold">{message}</p>
-      <p className="text-sm">Some additional text to explain said message.</p>
+    <div className="p-4">
+      <div className={`p-4 ${bookExists? "bg-red-200": "bg-green-200"} text-black rounded px-4 py-3`} role="alert">
+        <p className="text-center font-bold">{message}</p>
+      </div>
     </div>
   )
 }
@@ -114,7 +121,6 @@ export default function AddBook() {
         </div>
       </form>
       <BookCardElement displaySearch={bookCard} result={searchResults}></BookCardElement>
-      <InfoBanner display={bookCard} identifier={isbn}></InfoBanner>
       <div className="w-full text-xl text-center pb-2">
         <Link href="/browse">
           <a>Browse</a>

@@ -98,6 +98,9 @@ export const bookRouter = createRouter()
       }),
     async resolve({ input }) {
         const bookInfo = await prisma.book.findUnique({
+          select:{
+            title: true
+          },
           where: {
             identifier: String(input.identifier),
           }});
