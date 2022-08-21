@@ -17,17 +17,17 @@ const underlineFormButtonClasses2 = 'flex-shrink-0 border-transparent border-4 t
 const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult<BookInfo> }> = ({
   displaySearch,
   result }) => {
-  if (!displaySearch) return <div>Nothing yet</div>
+  if (!displaySearch) return <div></div>
   const title = result.data?.title || "Loading...";
   const authors = result.data?.authors || "Loading...";
   const languageNames = new Intl.DisplayNames(['en'], {
     type: 'language'
   });
   const language = languageNames.of(result.data?.language || "zxx");
-  const yearPublished = result.data?.pusblishedDate || "Loading...";
+  const yearPublished = result.data?.publishedDate || "Loading...";
   const thumbnail = result.data?.thumbnail || "https://static.thenounproject.com/png/132226-200.png"
   const isbn = result.data?.identifier || "Error"
-  const bookExists = trpc.useQuery(["book.is-book-in-db", {identifier: isbn }]);
+  const bookExists = trpc.useQuery(["book.is-book-in-db", { identifier: isbn }]);
   const storeMutation = trpc.useMutation(["book.store-book"]);
   const [display, setDisplay] = useState(false)
 
@@ -58,16 +58,16 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   );
 }
 
-const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: boolean}> = ({
+const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: boolean }> = ({
   display,
   identifier,
   bookExists
- }) => {
+}) => {
   if (!display) return <></>;
 
   let message = ""
   let color = "black"
-  if (!bookExists ) {
+  if (!bookExists) {
     message = "Book was added to the library"
     color = "green"
   } else {
@@ -76,7 +76,7 @@ const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: b
   }
   return (
     <div className="p-4">
-      <div className={`p-4 ${bookExists? "bg-red-200": "bg-green-200"} text-black rounded px-4 py-3`} role="alert">
+      <div className={`p-4 ${bookExists ? "bg-red-200" : "bg-green-200"} text-black rounded px-4 py-3`} role="alert">
         <p className="text-center font-bold">{message}</p>
       </div>
     </div>
@@ -86,9 +86,9 @@ const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: b
 export default function AddBook() {
 
   const [isbn, setIsbn] = useState("-1")
-  useEffect(() => {
-    setIsbn(String(getBookPair()[0]) || "-1")
-  }, []);
+  // useEffect(() => {
+  //   setIsbn(String(getBookPair()[0]) || "-1")
+  // }, []);
 
   const [bookCard, setBookCard] = useState(false);
   const searchResults = trpc.useQuery(["book.get-book-info-by-isbn", { identifier: (String(isbn)) }])
@@ -106,12 +106,12 @@ export default function AddBook() {
       <div className="p-4"></div>
       <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-white">bookŠkrab</h3>
       <div className="p-8"></div>
-      <div className="text-center">Add new book</div>
+      <div className="text-center text-sm">Enter an ISBN to add a new book</div>
       <div className="p-2"></div>
       <form className={underlineFormClasses} onSubmit={handleSearchISBN}>
         <div className={underlineFormDivClasses}>
-          <label>ISBN</label>
-          <input className={underlineFormInputClasses} type="text" placeholder={isbn} onChange={event => setIsbn(event.target.value)} name="ISBN"></input>
+          <label><b>ISBN:</b></label>
+          <input className={underlineFormInputClasses} type="text" placeholder={isbn === "-1" ? "" : isbn} onChange={event => setIsbn(event.target.value)} name="ISBN"></input>
           <button className={underlineFormButtonClasses1} type="submit">
             Search
           </button>
@@ -124,10 +124,6 @@ export default function AddBook() {
       <div className="w-full text-xl text-center pb-2">
         <Link href="/browse">
           <a>Browse</a>
-        </Link>
-        <span className="p-4">{"-"}</span>
-        <Link href="/about">
-          <a>About</a>
         </Link>
       </div>
     </div>

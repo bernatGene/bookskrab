@@ -55,24 +55,25 @@ export type BookProps = {
 const Post: React.FC<BookProps> = (props) => {
   return (
     <div className="p-8 flex flex-col items-center">
+      <div> <a href="/browse"> Back </a></div>
       <div className="p-4 fcenter lex flex-col max-w-2xl border">
         <div className="flex flex-row justify-items-end">
           <div className="flex flex-col">
-            <h2 className="text-xl">Title: {props?.title}</h2>
-            <div>By {props?.authors[0] || "Unknown author"}</div>
-            <div>Language: {props?.language || "Unknown"}</div>
+            <h2 className="text-xl"><b>Title</b>: {props?.title}</h2>
+            <div><b>By</b> {props?.authors[0] || "Unknown author"}</div>
+            <div><b>Language</b>: {props?.language || "Unknown"}</div>
           </div>
           <div className="p-8 rounded w-32 h-32 relative">
             <Image className="object-justify-end" src={props?.thumbnailURL} layout={"fill"} objectFit={"contain"} alt="No Image available" />
           </div>
         </div>
         <div className="p-4">
-          <p>Published: {props?.publishedDate || "Unknown date"}, by: {props?.publisher || "Unknown publisher"}</p>
-          <p>Page count: {props?.pageCount || "Unknown"}</p>
-          <p>Bookshelf: {props?.bookShelfShortName || "Unknown location"}</p>
-          <p>Description: {props?.description || "Empty"}</p>
-          <p>Copies: {props?.copies || "Empty"}</p>
-          <p>Tags: {props?.tags || "Empty"}</p>
+          <p><b>Published</b>: {props?.publishedDate || "Unknown date"} <b>by</b>: {props?.publisher || "Unknown publisher"}</p>
+          <p><b>Page count</b>: {props?.pageCount || "Unknown"}</p>
+          <p><b>Bookshelf</b>: {props?.bookShelfShortName || "Unknown location"}</p>
+          <p><b>Description</b>: {props?.description || "Empty"}</p>
+          <p><b>Copies</b>: {props?.copies || "Empty"}</p>
+          <p><b>Tags</b>: {props?.tags || "Empty"}</p>
         </div>
       </div>
     </div>

@@ -28,11 +28,18 @@ const BookListing: React.FC<{ result: BookDbResult[number], index: number }> = (
 }) => {
   const isbn = String(result.identifier)
   return (
-    <div className="relative flex flex-row items-center">
-      <div className="p-4">{index}</div>
-      <a href={"/browse/" + isbn} className="p-4">{result.title}</a>
-      <div className="p-4">{result.authors[0]?.name}</div>
-    </div>
+    <tr className="border-b">
+      <td className="px-6 py-2 whitespace-nowrap text-sm font-medium ">1</td>
+      <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
+        <a href={"/browse/" + isbn} className="p-4 no-underline hover:underline">{result.title}</a>
+      </td>
+      <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
+        <div className="p-4">{result.authors[0]?.name || "?"}</div>
+      </td>
+      <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
+        {result.lastModified.toString()}
+      </td>
+    </tr>
   );
 };
 
@@ -51,11 +58,42 @@ const BrowsePage: React.FC<{
       <Link href="/">
         <a>Back to main</a>
       </Link>
-      <div className="flex flex-col w-full max-w-2xl border">
-        {props.books
-          .map((currentBook, index) => {
-            return <BookListing result={currentBook} key={index} index={index + 1} />;
-          })}
+      <div className="flex flex-col w-full max-w-3xl border p-4">
+        <table className="table-auto p-4">
+        </table>
+        <div className="flex flex-col">
+          <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+              <div className="overflow-hidden">
+                <table className="min-w-full text-center">
+                  <thead className="border-b ">
+                    <tr>
+                      <th scope="col" className="text-sm font-medium px-6 py-2">
+                        #
+                      </th>
+                      <th scope="col" className="text-sm font-medium px-6 py-2">
+                        Title
+                      </th>
+                      <th scope="col" className="text-sm font-medium px-6 py-2">
+                        Author(s)
+                      </th>
+                      <th scope="col" className="text-sm font-medium px-6 py-2">
+                        Modified
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {props.books
+                      .map((currentBook, index) => {
+                        return <BookListing result={currentBook} key={index} index={index + 1} />;
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

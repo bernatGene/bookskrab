@@ -9,7 +9,7 @@ export interface BookInfo {
     title: string;
     language: string;
     publisher?: string;
-    pusblishedDate?: string;
+    publishedDate?: string;
     authors: string[];
     thumbnail?: string;
     identifier: string;
@@ -20,7 +20,7 @@ export interface BookInfo {
 const unknownBook : BookInfo = {
     title: "Unknown",
     language: "Unknown",
-    pusblishedDate: "Unknown",
+    publishedDate: "Unknown",
     authors: ["unknown"],
     thumbnail: undefined,
     identifier: "error",
@@ -34,12 +34,12 @@ function formatGoogleBooksResponse(response: AxiosResponse, identifier: string):
     const volumeInfo = response.data.items[0].volumeInfo;
     const title = volumeInfo.title || unknownBook.title;
     const language = volumeInfo.language || unknownBook.language;
-    const pusblishedDate = volumeInfo.publishedDate || unknownBook.pusblishedDate;
+    const publishedDate = volumeInfo.publishedDate || unknownBook.publishedDate;
     const authors = volumeInfo.authors || unknownBook.authors;
     const thumbnail = ("imageLinks" in volumeInfo) ? volumeInfo.imageLinks.thumbnail : unknownBook.thumbnail
     return {title: title,
             language: language,
-            pusblishedDate: pusblishedDate,
+            publishedDate: publishedDate,
             authors: authors,
             thumbnail: thumbnail,
             identifier: identifier,
@@ -84,7 +84,7 @@ export const bookRouter = createRouter()
         data: {identifier: input.identifier,
               idType: BOOK_ID_TYPE.ISBN13,
               title: input.title,
-              publishedDate: input?.publishedDate,
+              publishedDate: input.publishedDate,
               thumbnailURL: input?.thumbnail,
               language: input?.language,
             }
