@@ -18,6 +18,7 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   displaySearch,
   result }) => {
   const [displayBanner, setDisplayBanner] = useState(false)
+  const [currId, setCurrId] = useState("-1")
   const title = result.data?.title || "Loading...";
   const authors = result.data?.authors || "Loading...";
   const languageNames = new Intl.DisplayNames(['en'], {
@@ -32,6 +33,7 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   const storeToLibrary = async () => {
     if (result.data) storeMutation.mutate({ ...result.data });
     setDisplayBanner(true)
+    setCurrId(result.data?.identifier || "-1")
   }
 
   if (isbn == "Error") return <div>ISBN not found</div>
@@ -52,7 +54,7 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
         </div>
       </div>
       <button className={buttonClasses} onClick={storeToLibrary} type="button"> Add book to library</button>
-      <InfoBanner display={displayBanner} identifier={isbn} bookExists={bookExists.data == true}></InfoBanner>
+      <InfoBanner display={displayBanner && currId === isbn} identifier={isbn} bookExists={bookExists.data == true}></InfoBanner>
     </div>
   );
 }
