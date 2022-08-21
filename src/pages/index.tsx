@@ -17,7 +17,7 @@ const underlineFormButtonClasses2 = 'flex-shrink-0 border-transparent border-4 t
 const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult<BookInfo> }> = ({
   displaySearch,
   result }) => {
-  if (!displaySearch) return <div></div>
+  const [displayBanner, setDisplayBanner] = useState(false)
   const title = result.data?.title || "Loading...";
   const authors = result.data?.authors || "Loading...";
   const languageNames = new Intl.DisplayNames(['en'], {
@@ -29,13 +29,13 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
   const isbn = result.data?.identifier || "Error"
   const bookExists = trpc.useQuery(["book.is-book-in-db", { identifier: isbn }]);
   const storeMutation = trpc.useMutation(["book.store-book"]);
-  const [display, setDisplay] = useState(false)
   const storeToLibrary = async () => {
-    // if (result.data) storeMutation.mutate({ ...result.data });
-    setDisplay(true)
+    if (result.data) storeMutation.mutate({ ...result.data });
+    setDisplayBanner(true)
   }
 
   if (isbn == "Error") return <div>ISBN not found</div>
+  if (!displaySearch) return <div></div>
 
   return (
     <div className="p-4 border rounded flex flex-col">
@@ -52,7 +52,7 @@ const BookCardElement: React.FC<{ displaySearch: boolean, result: UseQueryResult
         </div>
       </div>
       <button className={buttonClasses} onClick={storeToLibrary} type="button"> Add book to library</button>
-      <InfoBanner display={display} identifier={isbn} bookExists={bookExists.data == true}></InfoBanner>
+      <InfoBanner display={displayBanner} identifier={isbn} bookExists={bookExists.data == true}></InfoBanner>
     </div>
   );
 }
