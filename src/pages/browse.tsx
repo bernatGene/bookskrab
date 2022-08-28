@@ -3,6 +3,7 @@ import { prisma } from "../server/db/client"
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { Header } from ".";
 
 
 export type AsyncReturnType<T extends (...args: any) => Promise<any>> =
@@ -29,7 +30,7 @@ const BookListing: React.FC<{ result: BookDbResult[number], index: number }> = (
   const isbn = String(result.identifier)
   return (
     <tr className="border-b">
-      <td className="px-6 py-2 whitespace-nowrap text-sm font-medium ">1</td>
+      <td className="px-6 py-2 whitespace-nowrap text-sm font-medium ">{index}</td>
       <td className="text-sm font-light px-6 py-2 whitespace-nowrap">
         <Link href={"/browse/" + isbn} className="p-4"><a className="no-underline hover:underline">{result.title}</a></Link>
       </td>
@@ -51,9 +52,7 @@ const BrowsePage: React.FC<{
   }
   return (
     <div className="flex flex-col items-center">
-      <Head>
-        <title>browse</title>
-      </Head>
+      <Header></Header>
       <h2 className="text-2xl p-4">Results</h2>
       <Link href="/">
        <a className="no-underline hover:underline">Back to main</a> 

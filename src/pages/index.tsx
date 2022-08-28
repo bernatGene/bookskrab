@@ -5,6 +5,7 @@ import { UseMutationResult, UseQueryResult } from "react-query";
 import { BookInfo } from "../server/router/bookinfo";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const buttonClasses = "bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow disabled"
 const underlineFormClasses = "w-full max-w-sm"
@@ -84,7 +85,7 @@ const InfoBanner: React.FC<{ display: boolean, identifier: string, bookExists: b
   )
 }
 
-export default function AddBook() {
+function AddBook() {
 
   const [isbn, setIsbn] = useState("-1")
   // useEffect(() => {
@@ -103,9 +104,7 @@ export default function AddBook() {
     setBookCard(false)
   };
   return (
-    <div className="h-screen w-screen flex flex-col justify-start items-center">
-      <div className="p-4"></div>
-      <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-white">bookŠkrab</h3>
+    <div>
       <div className="p-8"></div>
       <div className="text-center text-sm">Enter an ISBN to add a new book</div>
       <div className="p-2"></div>
@@ -122,11 +121,70 @@ export default function AddBook() {
         </div>
       </form>
       <BookCardElement displaySearch={bookCard} result={searchResults}></BookCardElement>
-      <div className="w-full text-xl text-center pb-2">
-        <Link href="/browse">
-          <a>Browse</a>
-        </Link>
-      </div>
     </div>
+  )
+}
+
+
+export function Header () {
+  const loc = useRouter();
+  const setBackground = (name: string) => {
+    if (loc.asPath === name) {
+      return "border-teal-500"
+    }
+  }
+  const [isNavOpen, setIsNavOpen] = useState(false); // initiate isNavOpen state with false
+
+  const toogleNav = () => {
+    if (isNavOpen) setIsNavOpen(false);
+    else setIsNavOpen(true);
+  }
+  return (
+    <nav className="flex items-center justify-between flex-wrap  p-6">
+        <div className="flex items-center flex-shrink-0 text-white mr-6">
+          <svg className="fill-current h-8 w-8 mr-2" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" /></svg>
+          <span className="font-semibold text-xl tracking-tight">Škrbook</span>
+        </div>
+        <div className="block lg:hidden">
+          <button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white" onClick={() => toogleNav()}>
+            <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" /></svg>
+          </button>
+        </div>
+        <div className={"w-full " + `${isNavOpen ? "block" : "hidden"}` + " flex-grow lg:flex lg:items-center lg:w-auto"}>
+          <div className="text-sm lg:flex-grow">
+            <a href="/" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4 border-spacing-2 border-teal-500">
+              Add new
+            </a>
+            <a href="/browse" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+              Library
+            </a>
+            <a href="#responsive-header" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
+              Search
+            </a>
+          </div>
+        </div>
+      </nav>
+  )
+}
+
+
+
+
+export default function Main() {
+
+  const [mode, setMode] = useState(0)
+  const componentByMode = (mode: number) => {
+    switch (mode) {
+      case 0:
+        return <AddBook></AddBook>
+    }
+  }
+  return (
+    <div className="flex flex-col items-center">
+      <Header></Header>
+      <div>{componentByMode(mode)}</div>
+      
+    </div>
+
   )
 }
